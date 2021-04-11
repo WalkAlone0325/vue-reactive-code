@@ -7,6 +7,7 @@ function initState(vm) {
   if (options.data) {
     initData(vm)
   }
+  // ... computed methods
 }
 
 function initData(vm) {

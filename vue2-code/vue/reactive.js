@@ -7,6 +7,7 @@ function defineReactiveData(data, key, value) {
   Object.defineProperty(data, key, {
     get() {
       console.log('响应式数据：获取', value)
+      // 进行一系列操作，数据绑定等等
       return value
     },
     set(newValue) {
