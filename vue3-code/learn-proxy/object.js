@@ -115,7 +115,12 @@ var obj = { a: 1, b: 2 }
 // Object.defineProperty()
 
 //* 7. 判断是否是自身属性 [[HasProperty]]
-// console.log(obj.hasOwnProperty('a')) // true
+obj.__proto__ = {
+  c: 3,
+  d: 4,
+}
+console.log(obj.hasOwnProperty('c')) // false
+console.log(obj.hasOwnProperty('a')) // true
 
 //* 8. [[GET]]
 // console.log('c' in obj) // false
