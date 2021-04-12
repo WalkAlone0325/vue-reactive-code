@@ -332,3 +332,11 @@ h 函数创建 vnode，然后转为 vdom 对象，通过 render 函数将 vdom �
 - 新子节点先循环完，则旧子节点剩余的就是需要删除的节点，把`[oldStartIdx, oldEndIdx]`之间的所有节点都删除
 
 在循环的时候，每处理一个节点，就将下标向中间箭头所指的方向移动一个位置，开始位置所表示的节点被处理后，就向后移动一个位置；结束位置所表示的节点被处理后，就向前移动一个位置；由于我们的优化策略都是新旧节点两两更新的，所以一次更新将会移动两个节点。说的再直白一点就是：`newStartIdx` 和 `oldStartIdx` `只能往后移动（只会加），newEndIdx` 和 `oldEndIdx` 只能往前移动（只会减
+
+## compiler
+
+render > template > el（html 式模板）
+
+`compileToRenderFunction` 编译 `template` 到 `AST`，`AST` 转 `render` 函数
+
+- 模板字符串匹配，每匹配完就会删除掉
