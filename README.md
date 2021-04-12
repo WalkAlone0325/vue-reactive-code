@@ -254,3 +254,11 @@ createElement
 - `render` 函数将 vdom 转为真实 rdom，并返回
 - `setAttrs`函数根据不同情况设置属性
 - `renderDom`将 rDom 挂载到需要挂载的节点上
+
+h 函数创建 vnode，然后转为 vdom 对象，通过 render 函数将 vdom 转为真实 dom，然后通过 mount 挂载到页面上
+
+### domDiff.js
+
+> `walk` 遍历递归，专业名词
+
+递归遍历并通过 diff 算法返回补丁包，然后通过 patch 将补丁打入新的 vdom，然后挂载到页面
