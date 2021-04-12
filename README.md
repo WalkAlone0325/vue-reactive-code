@@ -262,3 +262,73 @@ h 函数创建 vnode，然后转为 vdom 对象，通过 render 函数将 vdom �
 > `walk` 遍历递归，专业名词
 
 递归遍历并通过 diff 算法返回补丁包，然后通过 patch 将补丁打入新的 vdom，然后挂载到页面
+
+## patch
+
+> 以新的 VNode 为基准，改造旧的 oldVNode 使之成为跟新的 VNode 一样
+
+- 创建节点：新的 VNode 中有而旧的 oldVNode 中没有，就在旧的 oldVNode 中创建。
+- 删除节点：新的 VNode 中没有而旧的 oldVNode 中有，就在旧的 oldVNode 中删除。
+- 更新节点：新的 VNode 和旧的 oldVNode 中都有，就以新的 VNode 为准，更新就的 oldVNode。
+
+### 创建节点：（元素、注释、文本节点）
+
+- VNode 是元素节点，创建元素节点
+- VNode 是注释节点，创建注释节点
+- VNode 是文本节点，创建文本节点
+- 插入到 DOM 中
+
+### 删除节点：直接删除 Node
+
+### 更新节点
+
+- VNode 与 oldVNode 完全一样，退出
+- VNode 与 oldVNode 都是静态节点，退出
+- VNode 有 text 属性，新旧文本不同，用 VNode 的文本替换真实 DOM 节点中的内容
+- VNode 与 oldVNode 都有子节点，子节点不同，更新子节点**updateChildren**
+- 只有 VNode 有子节点
+
+  - oldVNode 有文本，清空 DOM 中的文本
+  - 把 VNode 的子节点添加到 DOM 中
+
+- 只有 oldVNode 中有子节点，清空 DOM 中的子节点
+- oldVNode 有文本，清空 DOM 中的文本
+
+#### 更新子节点
+
+- 创建子节点
+
+  如果 `newChildren` 里面的某个子节点在 `oldChildren` 里找不到与之相同的子节点，那么说明 `newChildren` 里面的这个子节点是之前没有的，是需要此次新增的节点，那么就创建子节点
+
+  **新增的合适的位置是所有未处理节点之前，而并非所有已处理节点之后**
+
+- 删除子节点
+
+  如果把 `newChildren` 里面的每一个子节点都循环完毕后，发现在 `oldChildren` 还有未处理的子节点，那就说明这些未处理的子节点是需要被废弃的，那么就将这些节点删除
+
+- 移动子节点
+
+  如果 `newChildren` 里面的某个子节点在 `oldChildren` 里找到了与之相同的子节点，但是所处的位置不同，这说明此次变化需要调整该子节点的位置，那就以 `newChildren` 里子节点的位置为基准，调整 `oldChildren` 里该节点的位置，使之与在 `newChildren` 里的位置相同
+
+  **所有未处理节点之前就是我们要移动的目的位置**
+
+- 更新节点
+
+  如果 `newChildren` 里面的某个子节点在 `oldChildren` 里找到了与之相同的子节点，并且所处的位置也相同，那么就更新 `oldChildren` 里该节点，使之与 `newChildren` 里的该节点相同
+
+#### 优化更新子节点
+
+- `newChildren` 数组里的所有未处理子节点的第一个子节点称为：新前；
+- `newChildren` 数组里的所有未处理子节点的最后一个子节点称为：新后；
+- `oldChildren` 数组里的所有未处理子节点的第一个子节点称为：旧前；
+- `oldChildren` 数组里的所有未处理子节点的最后一个子节点称为：旧后；
+
+- 新前和旧前
+- 新后和旧后
+- 新后和旧前
+- 新前和旧后
+- 不属于以上四种情况，就进行常规的循环比对 patch
+- 旧子节点先循环完，则新子节点剩余的就是需要新增的节点，把`[newStartIdx, newEndIdx]`之间的所有节点都插入到 DOM 中
+- 新子节点先循环完，则旧子节点剩余的就是需要删除的节点，把`[oldStartIdx, oldEndIdx]`之间的所有节点都删除
+
+在循环的时候，每处理一个节点，就将下标向中间箭头所指的方向移动一个位置，开始位置所表示的节点被处理后，就向后移动一个位置；结束位置所表示的节点被处理后，就向前移动一个位置；由于我们的优化策略都是新旧节点两两更新的，所以一次更新将会移动两个节点。说的再直白一点就是：`newStartIdx` 和 `oldStartIdx` `只能往后移动（只会加），newEndIdx` 和 `oldEndIdx` 只能往前移动（只会减
