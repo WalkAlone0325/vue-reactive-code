@@ -240,3 +240,17 @@ if (Array.isArray(data)) {
 
 > 内置对象 方法集合的容器，跟 Math 很像
 > 13 种，没有枚举
+
+## v-dom 虚拟节点与 DOM Diff 算法解析
+
+### index.js
+
+createElement
+
+### virtualDom.js
+
+- `createElement` 创建
+- `Element` 返回 dom 对象
+- `render` 函数将 vdom 转为真实 rdom，并返回
+- `setAttrs`函数根据不同情况设置属性
+- `renderDom`将 rDom 挂载到需要挂载的节点上
